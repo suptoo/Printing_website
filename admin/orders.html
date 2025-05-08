@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Orders - EasyCall BD</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="../css/additional-styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: #1a1d21;
+        color: #ffffff;
+    }
+    
+    .admin-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+    
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .admin-title {
+        font-size: 2rem;
+        color: #b4e04b;
+    }
+    
+    .admin-actions {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .btn-admin {
+        padding: 10px 20px;
+        background-color: #2c3038;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-admin:hover {
+        background-color: #3a3f48;
+    }
+    
+    .btn-logout {
+        background-color: #dc3545;
+    }
+    
+    .btn-logout:hover {
+        background-color: #c82333;
+    }
+    
+    .orders-filter {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .filter-item {
+        padding: 8px 16px;
+        background-color: #2c3038;
+        color: #ffffff;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .filter-item.active {
+        background-color: #b4e04b;
+        color: #1a1d21;
+    }
+    
+    .filter-item:hover:not(.active) {
+        background-color: #3a3f48;
+    }
+    
+    .orders-table-container {
+        background-color: #2c3038;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .orders-table th {
+        background-color: #13151a;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #b4e04b;
+    }
+    
+    .orders-table td {
+        padding: 15px;
+        border-bottom: 1px solid #3a3f48;
+    }
+    
+    .orders-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .orders-table tr:hover {
+        background-color: #3a3f48;
+    }
+    
+    .order-id {
+        font-family: monospace;
+        font-weight: 600;
+    }
+    
+    .order-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .status-new {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+    
+    .status-processing {
+        background-color: #ffc107;
+        color: #1a1d21;
+    }
+    
+    .status-completed {
+        background-color: #28a745;
+        color: #ffffff;
+    }
+    
+    .status-cancelled {
+        background-color: #dc3545;
+        color: #ffffff;
+    }
+    
+    .order-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #13151a;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-action:hover {
+        background-color: #b4e04b;
+        color: #1a1d21;
+    }
+    
+    .no-orders {
+        text-align: center;
+        padding: 50px 20px;
+    }
+    
+    .no-orders i {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+    
+    .no-orders h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .no-orders p {
+        color: #adb5bd;
+    }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        overflow-y: auto;
+    }
+    
+    .modal-content {
+        background-color: #2c3038;
+        margin: 50px auto;
+        max-width: 800px;
+        border-radius: 8px;
+        position: relative;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 1.5rem;
+        color: #adb5bd;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+    
+    .modal-close:hover {
+        color: #ffffff;
+    }
+    
+    .modal-body {
+        padding: 30px;
+    }
+    
+    .order-details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .order-details-header h2 {
+        font-size: 1.8rem;
+        color: #b4e04b;
+    }
+    
+    .order-details-section {
+        background-color: #13151a;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .order-details-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: #b4e04b;
+    }
+    
+    .detail-item {
+        display: flex;
+        margin-bottom: 10px;
+    }
+    
+    .detail-label {
+        width: 150px;
+        font-weight: 600;
+        color: #adb5bd;
+    }
+    
+    .detail-value {
+        flex: 1;
+    }
+    
+    .file-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #007bff;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .file-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+    
+    .status-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-status {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-status-processing {
+        background-color: #ffc107;
+        color: #1a1d21;
+    }
+    
+    .btn-status-processing:hover {
+        background-color: #e0a800;
+    }
+    
+    .btn-status-completed {
+        background-color: #28a745;
+        color: #ffffff;
+    }
+    
+    .btn-status-completed:hover {
+        background-color: #218838;
+    }
+    
+    .btn-status-cancelled {
+        background-color: #dc3545;
+        color: #ffffff;
+    }
+    
+    .btn-status-cancelled:hover {
+        background-color: #c82333;
+    }
+    
+    .loading-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 0;
+    }
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #b4e04b;
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 15px;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+        .admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .orders-table th:nth-child(3),
+        .orders-table td:nth-child(3) {
+            display: none;
+        }
+        
+        .detail-item {
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+    }
+</style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="logo">
+            <a href="../index.html">
+                <h1>Print<span>Master</span></h1>
+            </a>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="../index.html">Website</a></li>
+                <li><a href="orders.html" class="active">Orders</a></li>
+            </ul>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1 class="admin-title">Order Management</h1>
+        <div class="admin-actions">
+            <button id="refreshOrders" class="btn-admin">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <button id="logoutBtn" class="btn-admin btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+    
+    <div class="orders-filter">
+        <div class="filter-item active" data-filter="all">All Orders</div>
+        <div class="filter-item" data-filter="new">New</div>
+        <div class="filter-item" data-filter="processing">Processing</div>
+        <div class="filter-item" data-filter="completed">Completed</div>
+        <div class="filter-item" data-filter="cancelled">Cancelled</div>
+    </div>
+    
+    <div class="orders-table-container">
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>District</th>
+                    <th>Print Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+                <!-- Orders will be loaded here -->
+                <tr>
+                    <td colspan="6">
+                        <div class="loading-indicator">
+                            <div class="spinner"></div>
+                            <p>Loading orders...</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div id="orderDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" id="closeOrderDetails">&times;</span>
+        <div class="modal-body" id="orderDetailsContent">
+            <!-- Order details will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Firebase Scripts -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDuY1EhiKneD7P-6wS7nDdcI1tai0iY_aM",
+        authDomain: "easycall-bd.firebaseapp.com",
+        projectId: "easycall-bd",
+        storageBucket: "easycall-bd.appspot.com",
+        messagingSenderId: "118716206171",
+        appId: "1:118716206171:web:ff4415627abf6ca2e8837e",
+        measurementId: "G-MP1LWS3WJY"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM Elements
+    const ordersTableBody = document.getElementById('ordersTableBody');
+    const filterItems = document.querySelectorAll('.filter-item');
+    const refreshOrdersBtn = document.getElementById('refreshOrders');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const orderDetailsModal = document.getElementById('orderDetailsModal');
+    const closeOrderDetailsBtn = document.getElementById('closeOrderDetails');
+    const orderDetailsContent = document.getElementById('orderDetailsContent');
+
+    // Check authentication state
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            // Redirect to login page if not authenticated
+            window.location.href = 'login.html';
+        } else {
+            // Load orders if authenticated
+            loadOrders();
+        }
+    });
+
+    // Logout function
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            window.location.href = 'login.html';
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    });
+
+    // Refresh orders
+    refreshOrdersBtn.addEventListener('click', () => {
+        loadOrders();
+    });
+
+    // Filter orders
+    let currentFilter = 'all';
+    filterItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Update active filter
+            filterItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            // Set current filter
+            currentFilter = item.dataset.filter;
+            
+            // Apply filter
+            loadOrders();
+        });
+    });
+
+    // Close modal
+    closeOrderDetailsBtn.addEventListener('click', () => {
+        orderDetailsModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === orderDetailsModal) {
+            orderDetailsModal.style.display = 'none';
+        }
+    });
+
+    // Load orders from Firestore
+    async function loadOrders() {
+        try {
+            // Show loading indicator
+            ordersTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="loading-indicator">
+                            <div class="spinner"></div>
+                            <p>Loading orders...</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Get orders from Firestore
+            const ordersQuery = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+            const querySnapshot = await getDocs(ordersQuery);
+            
+            // Check if there are any orders
+            if (querySnapshot.empty) {
+                ordersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="no-orders">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No Orders Found</h3>
+                                <p>There are no orders in the system yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Process orders
+            let ordersHTML = '';
+            let filteredCount = 0;
+            
+            querySnapshot.forEach((doc) => {
+                const order = doc.data();
+                const orderId = doc.id;
+                const date = order.timestamp ? new Date(order.timestamp.toDate()).toLocaleString() : 'N/A';
+                const status = order.status || 'new';
+                
+                // Apply filter
+                if (currentFilter !== 'all' && status !== currentFilter) {
+                    return;
+                }
+                
+                filteredCount++;
+                
+                ordersHTML += `
+                    <tr>
+                        <td class="order-id">${orderId.substring(0, 8)}...</td>
+                        <td>${date}</td>
+                        <td>${order.district || 'N/A'}</td>
+                        <td>${order.printType || 'N/A'}</td>
+                        <td><span class="order-status status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+                        <td>
+                            <div class="order-actions">
+                                <button onclick="window.viewOrderDetails('${orderId}')" class="btn-action" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            // Check if there are any filtered orders
+            if (filteredCount === 0) {
+                ordersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="no-orders">
+                                <i class="fas fa-filter"></i>
+                                <h3>No ${currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1)} Orders</h3>
+                                <p>There are no orders with the selected status.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Update table with orders
+            ordersTableBody.innerHTML = ordersHTML;
+            
+        } catch (error) {
+            console.error("Error loading orders:", error);
+            ordersTableBody.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="no-orders">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Orders</h3>
+                            <p>There was an error loading the orders. Please try again later.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    // View order details
+    window.viewOrderDetails = async (orderId) => {
+        try {
+            // Show loading in the modal
+            orderDetailsContent.innerHTML = `
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                </div>
+            `;
+            
+            // Show the modal
+            orderDetailsModal.style.display = 'block';
+            
+            // Get the order from Firestore
+            const orderDoc = await getDoc(doc(db, "orders", orderId));
+            
+            if (!orderDoc.exists()) {
+                orderDetailsContent.innerHTML = `
+                    <div class="no-orders">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Order Not Found</h3>
+                        <p>The requested order could not be found.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const order = orderDoc.data();
+            const date = order.timestamp ? new Date(order.timestamp.toDate()).toLocaleString() : 'N/A';
+            const status = order.status || 'new';
+            
+            // Format the order details
+            let detailsHTML = `
+                <div class="order-details-header">
+                    <h2>Order Details</h2>
+                    <span class="order-status status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                </div>
+                
+                <div class="order-details-section">
+                    <h3>Order Information</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">Order ID:</div>
+                        <div class="detail-value">${orderId}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Date:</div>
+                        <div class="detail-value">${date}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value">${status.charAt(0).toUpperCase() + status.slice(1)}</div>
+                    </div>
+                </div>
+                
+                <div class="order-details-section">
+                    <h3>Print Details</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">Print Type:</div>
+                        <div class="detail-value">${order.printType || 'N/A'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Page Count:</div>
+                        <div class="detail-value">${order.pageCount || 'N/A'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">File Link:</div>
+                        <div class="detail-value">
+                            ${order.driveUrl ? 
+                                `<a href="${order.driveUrl}" target="_blank" class="file-link">
+                                    <i class="fas fa-external-link-alt"></i> Open File Link
+                                </a>` : 
+                                'No file link provided'}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-details-section">
+                    <h3>Customer Location</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">District:</div>
+                        <div class="detail-value">${order.district || 'N/A'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Area:</div>
+                        <div class="detail-value">${order.area || 'N/A'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Address:</div>
+                        <div class="detail-value">${order.address || 'N/A'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone:</div>
+                        <div class="detail-value">${order.phone || 'N/A'}</div>
+                    </div>
+                </div>
+                
+                ${order.notes ? `
+                <div class="order-details-section">
+                    <h3>Additional Notes</h3>
+                    <div class="detail-item">
+                        <div class="detail-value">${order.notes}</div>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="order-details-section">
+                    <h3>Actions</h3>
+                    <div class="status-actions">
+                        <button onclick="window.updateOrderStatus('${orderId}', 'processing')" class="btn-status btn-status-processing">
+                            Mark as Processing
+                        </button>
+                        <button onclick="window.updateOrderStatus('${orderId}', 'completed')" class="btn-status btn-status-completed">
+                            Mark as Completed
+                        </button>
+                        <button onclick="window.updateOrderStatus('${orderId}', 'cancelled')" class="btn-status btn-status-cancelled">
+                            Mark as Cancelled
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Update the modal content
+            orderDetailsContent.innerHTML = detailsHTML;
+        } catch (error) {
+            console.error("Error viewing order details:", error);
+            orderDetailsContent.innerHTML = `
+                <div class="no-orders">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Order Details</h3>
+                    <p>There was an error loading the order details. Please try again later.</p>
+                </div>
+            `;
+        }
+    };
+
+    // Update order status
+    window.updateOrderStatus = async (orderId, newStatus) => {
+        try {
+            // Update the order status in Firestore
+            await updateDoc(doc(db, "orders", orderId), {
+                status: newStatus
+            });
+            
+            // Reload the order details
+            window.viewOrderDetails(orderId);
+            
+            // Reload the orders list
+            loadOrders();
+            
+        } catch (error) {
+            console.error("Error updating order status:", error);
+            alert("Error updating order status. Please try again.");
+        }
+    };
+</script>
+</body>
+</html>
