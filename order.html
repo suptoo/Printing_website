@@ -143,6 +143,10 @@
         color: #6c757d;
     }
     
+    .form-control.invalid {
+        border-color: #dc3545;
+    }
+    
     select.form-control {
         appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
@@ -412,23 +416,6 @@
         visibility: visible;
     }
     
-    /* Form step styles */
-    .form-step {
-        display: block;
-    }
-    
-    .form-navigation {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        grid-column: span 2;
-    }
-    
-    .form-navigation .btn-order,
-    .form-navigation .btn-prev {
-        width: 48%;
-    }
-    
     /* Progress indicator */
     .progress-container {
         margin-bottom: 30px;
@@ -502,10 +489,47 @@
         transition: width 0.3s ease;
     }
     
+    /* Form step styles */
+    .form-step {
+        display: none;
+    }
+    
+    .form-step.active {
+        display: block;
+    }
+    
+    .form-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        grid-column: span 2;
+    }
+    
+    .form-navigation .btn-order,
+    .form-navigation .btn-prev {
+        width: 48%;
+    }
+    
     /* Mobile styles */
     @media (max-width: 768px) {
         .nav-links {
             display: none;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            background-color: #13151a;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 100;
+        }
+        
+        .nav-links.active {
+            display: flex;
+        }
+        
+        .nav-links li {
+            margin: 10px 0;
         }
         
         .mobile-menu {
@@ -558,15 +582,6 @@
         
         .footer-bottom-links li {
             margin: 0 10px;
-        }
-        
-        /* Mobile wizard */
-        .form-step {
-            display: none;
-        }
-        
-        .form-step.active {
-            display: block;
         }
         
         .form-navigation {
@@ -801,15 +816,17 @@
 
 <!-- Firebase Scripts -->
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-analytics.js";
 
-    // Firebase configuration
+    // Your web app's Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyDuY1EhiKneD7P-6wS7nDdcI1tai0iY_aM",
         authDomain: "easycall-bd.firebaseapp.com",
         projectId: "easycall-bd",
-        storageBucket: "easycall-bd.appspot.com",
+        storageBucket: "easycall-bd.firebasestorage.app",
         messagingSenderId: "118716206171",
         appId: "1:118716206171:web:ff4415627abf6ca2e8837e",
         measurementId: "G-MP1LWS3WJY"
@@ -818,6 +835,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const analytics = getAnalytics(app);
 
     // Areas by district
     const areasByDistrict = {
@@ -980,7 +998,7 @@
             try {
                 // Get form values
                 const driveUrl = document.getElementById('driveUrl').value;
-                const pageCount = document.getElementById('pageCount').value;
+                const pageCount = parseInt(document.getElementById('pageCount').value);
                 const printType = document.getElementById('printType').value;
                 const district = document.getElementById('district').value;
                 const area = document.getElementById('area').value;
@@ -996,7 +1014,7 @@
                 // Create order data object
                 const orderData = {
                     driveUrl,
-                    pageCount: Number(pageCount),
+                    pageCount,
                     printType,
                     district,
                     area,
