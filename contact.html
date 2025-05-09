@@ -340,7 +340,7 @@ header .container {
 }
 
 .faq-answer p {
-    color: var(--muted-text);
+    color: var (--muted-text);
     font-size: 0.95rem;
     line-height: 1.6;
 }
@@ -733,7 +733,12 @@ footer {
                 
                 <div id="formFeedback" class="form-feedback"></div>
                 
-                <form id="contactForm" class="contact-form">
+                <form
+                    id="contactForm"
+                    class="contact-form"
+                    action="https://formspree.io/f/xkgrzrrp"
+                    method="POST"
+                >
                     <div class="form-row">
                         <div class="form-group">
                             <label for="first-name">First Name*</label>
@@ -789,7 +794,7 @@ footer {
                     </div>
                     
                     <div class="form-group">
-                        <button type="submit" id="submitBtn" class="btn btn-primary">Send Message</button>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
                     </div>
                 </form>
             </div>
@@ -952,161 +957,6 @@ footer {
 <div class="scroll-to-top">
     <i class="fas fa-arrow-up"></i>
 </div>
-
-<script>
-  (function(){
-    // DOM Elements
-    const form = document.getElementById('contactForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const formFeedback = document.getElementById('formFeedback');
-    const faqItems = document.querySelectorAll('.faq-item');
-    const mobileMenuBtn = document.querySelector('.mobile-menu');
-    const navLinks = document.querySelector('.nav-links');
-    const scrollToTopBtn = document.querySelector('.scroll-to-top');
-    
-    // Show form feedback message
-    function showFeedback(message, isError = false) {
-      formFeedback.textContent = message;
-      formFeedback.className = isError ? 'form-feedback error' : 'form-feedback success';
-      formFeedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    
-    // Set loading state for submit button
-    function setLoading(isLoading) {
-      if (isLoading) {
-        submitBtn.classList.add('btn-loading');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = 'Sending... <span class="spinner"></span>';
-      } else {
-        submitBtn.classList.remove('btn-loading');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Send Message';
-      }
-    }
-    
-    // Form submission handler
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      
-      // Reset feedback
-      formFeedback.className = 'form-feedback';
-      formFeedback.textContent = '';
-      
-      // 1) Check network first
-      if (!navigator.onLine) {
-        showFeedback('No internet connection. Please check your network and try again.', true);
-        return;
-      }
-      
-      // Set loading state
-      setLoading(true);
-      
-      // Prepare form data
-      const payload = {
-        firstName:   form['first-name'].value.trim(),
-        lastName:    form['last-name'].value.trim(),
-        email:       form.email.value.trim(),
-        phone:       form.phone.value.trim(),
-        company:     form.company.value.trim(),
-        subject:     form.subject.value.trim(),
-        message:     form.message.value.trim(),
-        inquiryType: form['inquiry-type'].value,
-        newsletter:  form.newsletter.checked
-      };
-      
-      try {
-        // First try with the original API
-        let response = await fetch('https://api.milijet.com/v1/contact/send', {
-          method: 'POST',
-          mode:   'cors',
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Accept':       'application/json',
-            'X-API-Key':    'a06161d1ba95628da45db9a9b0f9d3f9'
-          },
-          body: JSON.stringify(payload)
-        });
-        
-        // If the original API fails, use a fallback method
-        if (!response.ok) {
-          // Fallback to email.js or another service
-          // For demo purposes, we'll simulate a successful response
-          console.log('Primary API failed, using fallback method');
-          
-          // Simulate a delay for the fallback method
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          // Simulate a successful response
-          showFeedback('Your message has been sent successfully!');
-          form.reset();
-          setLoading(false);
-          return;
-        }
-        
-        // If we get here, the original API worked
-        const result = await response.json();
-        
-        if (result.success) {
-          showFeedback('Your message has been sent successfully!');
-          form.reset();
-        } else {
-          showFeedback(result.message || 'Failed to send message. Please try again.', true);
-        }
-      } catch(error) {
-        console.error('Error sending form:', error);
-        
-        // Use a more user-friendly error message
-        showFeedback('We encountered a problem sending your message. Please try again or contact us directly by phone.', true);
-      } finally {
-        setLoading(false);
-      }
-    });
-    
-    // FAQ Accordion
-    faqItems.forEach(item => {
-      const question = item.querySelector('.faq-question');
-      
-      question.addEventListener('click', () => {
-        const isActive = item.classList.contains('active');
-        
-        // Close all items
-        faqItems.forEach(faq => {
-          faq.classList.remove('active');
-        });
-        
-        // Open clicked item if it wasn't already open
-        if (!isActive) {
-          item.classList.add('active');
-        }
-      });
-    });
-    
-    // Mobile Menu Toggle
-    if (mobileMenuBtn && navLinks) {
-      mobileMenuBtn.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-      });
-    }
-    
-    // Scroll to Top Button
-    if (scrollToTopBtn) {
-      window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-          scrollToTopBtn.classList.add('active');
-        } else {
-          scrollToTopBtn.classList.remove('active');
-        }
-      });
-      
-      scrollToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      });
-    }
-  })();
-</script>
 
 </body>
 </html>
