@@ -1327,14 +1327,3 @@
     margin-right: 5px;
 }
 /* ===== END OF CSS ===== */
-
-.lol  {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6em 1.2em;    /* same vertical & horizontal padding */
-  font-size: 1rem;         /* same text size */
-  border-radius: 50px;     /* same roundness */
-  text-decoration: none;
-  transition: all 0.3s;
-}
