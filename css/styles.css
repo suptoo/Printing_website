@@ -1315,3 +1315,38 @@
   .pulse {
     animation: pulse 2s infinite;
   }
+  .btn-whatsapp {
+    background: #25D366;
+    color: #fff;
+    margin-left: 10px;
+}
+.btn-whatsapp:hover {
+    background: #1DA851;
+}
+  .btn-whatsapp i {
+    margin-right: 5px;
+}
+/* ===== END OF CSS ===== */
+.btn-primary {
+    display: inline-block;
+    padding: 0.8em 1.8em;
+    background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(30, 144, 255, 0.4);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
+    box-shadow: 0 6px 20px rgba(30, 144, 255, 0.6);
+    transform: translateY(-2px);
+    outline: none;
+}
