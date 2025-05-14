@@ -1328,21 +1328,13 @@
 }
 /* ===== END OF CSS ===== */
 
-.lol {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5em 1em;
-    background-color: #1e90ff;
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: background 0.2s;
+.lol  {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6em 1.2em;    /* same vertical & horizontal padding */
+  font-size: 1rem;         /* same text size */
+  border-radius: 50px;     /* same roundness */
+  text-decoration: none;
+  transition: all 0.3s;
 }
-
-.lol:hover {
-    background-color: #187bcd;
-}
-
