@@ -1327,26 +1327,22 @@
     margin-right: 5px;
 }
 /* ===== END OF CSS ===== */
+
 .lol {
-    display: inline-block;
-    padding: 0.8em 1.8em;
-    background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em 1em;
+    background-color: #1e90ff;
     color: #fff;
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
     border: none;
     border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(30, 144, 255, 0.4);
-    transition: all 0.3s ease;
+    font-size: 0.9rem;
     text-decoration: none;
+    transition: background 0.2s;
 }
 
-.lol:hover,
-.lol:focus {
-    background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
-    box-shadow: 0 6px 20px rgba(30, 144, 255, 0.6);
-    transform: translateY(-2px);
-    outline: none;
+.lol:hover {
+    background-color: #187bcd;
 }
+
