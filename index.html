@@ -233,7 +233,7 @@
                 <a href="https://wa.me/8801586033732" target="_blank" class="btn btn-whatsapp">
                     <i class="fab fa-whatsapp"></i> Order via WhatsApp
                 </a>
-                  <a href="mailto:easycallbd2005@gmail.com?subject=Printing%20Order" class="btn btn-secondary">
+                <a href="#" id="emailLink" class="btn btn-secondary">
                     <i class="fas fa-envelope"></i> Order via Email
                 </a>
             </div>
@@ -317,5 +317,20 @@
     })();
     </script>
     <!--End of Tawk.to Script-->
+
+    <script>
+      (function(){
+        var link = document.getElementById('emailLink');
+        var mailto = 'mailto:easycallbd2005@gmail.com?subject=Printing%20Order';
+        var gmail  = 'https://mail.google.com/mail/?view=cm&fs=1&to=easycallbd2005@gmail.com&su=Printing%20Order';
+        // simple mobile‐vs‐desktop test
+        if(/Mobi|Android/i.test(navigator.userAgent)) {
+          link.href = mailto;
+        } else {
+          link.href   = gmail;
+          link.target = '_blank';
+        }
+      })();
+    </script>
 </body>
 </html>
